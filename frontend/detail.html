@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="./css/detail.css" />
+    <link rel="stylesheet" href="./css/navbar.css" />
+</head>
+
+<body>
+    <div w3-include-html="./navbar.html"></div>
+    <div id="global">
+        <h1 id="titre"></h1>
+        <div id="article">
+            <img id="image"/>
+            <div id="content">
+                <p id="desc"></p>
+                <div id="footer_content">
+                    <p id="price"></p>
+                    <input id="addbtn" type="submit" value="Ajouter"/>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="./js/tools.js"></script>
+    <script src="./js/navbar.js"></script>
+    <script>
+        async function logJSONData() {
+            const searchParams = new URLSearchParams(window.location.search);
+            const id = searchParams.get('id');
+            const response = await fetch("http://localhost:3000/products/" + id);
+            const jsonData = await response.json();
+            var title_text = document.createTextNode(jsonData.name);
+            document.getElementById("titre").appendChild(title_text);
+            document.getElementById("image").src = jsonData.image
+            var desc_text = document.createTextNode(jsonData.description);
+            document.getElementById("desc").appendChild(desc_text);
+            var price_text = document.createTextNode(jsonData.price + "€");
+            document.getElementById("price").appendChild(price_text);
+        }
+        logJSONData();
+        includeHTML()        
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <style>
+        .userItem {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .userItem span {
+            padding: 10px;
+            border: 1px solid black;
+        }
+    </style>
+    <link rel="stylesheet" href="./css/navbar.css" />
+</head>
+
+<body>
+    <div w3-include-html="./navbar.html"></div>
+    <h1>Utilisateurs</h1>
+    <script src="./js/api.js"></script>
+    <script src="./js/tools.js"></script>
+    <script src="./js/navbar.js"></script>
+    <script>
+
+        async function loadData(access_token) {
+            const response = await fetch(URL_API + "/users",
+                {
+                    headers: { 'Authorization': 'Bearer ' + access_token }
+                }
+            );
+            const jsonData = await response.json();
+            if (Array.isArray(jsonData)) {
+                jsonData.forEach(element => {
+                    var divUser = document.createElement("div");
+                    divUser.className = "userItem"
+                    var typeUser = document.createElement("span");
+                    var typeUserText = document.createTextNode(element.type.name);
+                    typeUser.appendChild(typeUserText);
+                    var nameUser = document.createElement("span");
+                    var nameUserText = document.createTextNode(element.firstname + " " + element.lastname);
+                    nameUser.appendChild(nameUserText);
+                    var emailUser = document.createElement("span");
+                    var emailUserText = document.createTextNode(element.email);
+                    emailUser.appendChild(emailUserText);
+                    var phoneUser = document.createElement("span");
+                    var phoneUserText = document.createTextNode(element.phone);
+                    phoneUser.appendChild(phoneUserText);
+
+
+                    divUser.appendChild(typeUser);
+                    divUser.appendChild(nameUser);
+                    divUser.appendChild(emailUser);
+                    divUser.appendChild(phoneUser);
+                    document.body.appendChild(divUser);
+                });
+            } else {
+                var refreshResponse = await refreshToken();
+                if (refreshResponse.access_token) {
+                    loadData(refreshResponse.access_token)
+                }
+            }
+        }
+
+        if (!localStorage.getItem("tokens")) {
+            location.href = "./login.html";
+        } else {
+            var tokens = JSON.parse(localStorage.getItem("tokens"));
+            loadData(tokens.access_token);
+        }
+        includeHTML();
+    </script>
+</body>
+
+</html>
